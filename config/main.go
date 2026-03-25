@@ -15,8 +15,8 @@ type Config struct{
 }
 
 type cfgJSON struct {
-	CurrentUser string 			`json: "currentUser"`
-	UserCFgs map[string]Config	`json: "userConfigs"`
+	CurrentUser 	string 				`json:"currentUser"`
+	UserCFgs 		map[string]Config	`json:"userConfigs"`
 }
 
 
@@ -69,7 +69,7 @@ func GetUserConfig(username string) (Config, error) {
 func (cfg *Config) SetUser (username string) error {
 	home, err := os.UserHomeDir()
 		if err != nil {
-			fmt.Errorf("failed to find Home dir: %w", err)
+			return fmt.Errorf("failed to find Home dir: %w", err)
 		}
 	configFileURL := filepath.Join(home, configFileName)
 
