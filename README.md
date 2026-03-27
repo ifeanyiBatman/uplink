@@ -32,12 +32,19 @@ Alternatively, you can install it directly via `go install` (assuming your Go wo
 go install github.com/ifeanyiBatman/uplink@latest
 ```
 
-## First Run Configuration
+## Getting Started
 
-The first time you run Uplink, you will be prompted to enter your ngrok credentials. These will be securely saved into `.uplinkconfig.json` in your home directory.
+### Register a User
+
+Register your ngrok credentials with Uplink. These will be saved to `~/.uplinkconfig.json`. You can run `register` multiple times to add additional users.
+
+```bash
+./uplink register
+```
+
+You will be prompted to enter your authtoken, custom domain, and a username:
 
 ```text
-$ ./uplink
 Please setup Ngrok... https://dashboard.ngrok.com/get-started/setup
 Enter your authtoken: <your_ngrok_authtoken_here>
 Enter your domain: <your-custom.ngrok.app>
@@ -46,7 +53,9 @@ Enter your username: <your_preferred_username>
 
 ## Usage
 
-Once configured, simply run `uplink` and specify the port your local server is running on.
+### Start a Tunnel
+
+Once registered, simply run `uplink` to expose your local server.
 
 Expose the default port (8080):
 ```bash
@@ -56,6 +65,22 @@ Expose the default port (8080):
 Expose a custom port (e.g., 3000):
 ```bash
 ./uplink -port 3000
+```
+
+### Switch User
+
+If you've registered multiple accounts, switch between them with `login`:
+
+```bash
+./uplink login <username>
+```
+
+### List Registered Users
+
+View all registered users. The currently active user is marked with `[x]`:
+
+```bash
+./uplink users
 ```
 
 ### Stopping the Tunnel

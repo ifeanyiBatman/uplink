@@ -14,41 +14,36 @@ import (
 )
 
 func main() {
+	var cfg config.Config
+	
+	args := os.Args[1:]
+	if len(args) == 1 {
+		if args[0] == "register" {
+			register(&cfg)
+			return
+		}
+		if args[0] == "users" {
+			config.ListUsers()
+			return
+		}
+	} else if len(args) == 2 {
+		if args[0] == "login" {
+			config.Login(args[1])
+		}
+	}
+	
 	
 	port := flag.String("port", "8080", "Usage: -port (xxxx) default 8080")
 	flag.Parse()
 	
-	var cfg config.Config
+
 	
 	
 	username, err := config.GetCurrentUser()
 	if err != nil {
-		fmt.Println("Please setup Ngrok... https://dashboard.ngrok.com/get-started/setup")
-
-		fmt.Print("Enter your authtoken: ")
-		reader := bufio.NewReader(os.Stdin)
-		authtoken,_ := reader.ReadString('\n')
-		cfg.AuthToken = strings.TrimSpace(authtoken)
-		
-		fmt.Print("Enter your domain: ")
-		reader = bufio.NewReader(os.Stdin)
-		domain, err := reader.ReadString('\n')
-		cfg.Domain = strings.TrimSpace(domain)
-		
-		fmt.Print("Enter your username: ")
-		reader = bufio.NewReader(os.Stdin)
-		username, err = reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("Error reading input:", err)
-			return
-		}
-		err = cfg.SetUser(username)
-		if err != nil {
-			fmt.Printf("Error setting you up %s :(%v)\n", username,err)
-			return
+		err = register(&cfg)
 		}
 
-	}
 	cfg, err = config.GetUserConfig(username)
 	if err != nil {
 		fmt.Printf("Error getting user err: %s", err)
@@ -109,3 +104,33 @@ func run(ctx context.Context, cfg config.Config) error {
 	return nil
 }
 
+func register (cfg *config.Config) error {
+	fmt.Println("Please setup Ngrok... https://dashboard.ngrok.com/get-started/setup")
+
+	fmt.Print("Enter your authtoken: ")
+	reader := bufio.NewReader(os.Stdin)
+	authtoken,_ := reader.ReadString('\n')
+	cfg.AuthToken = strings.TrimSpace(authtoken)
+	
+	fmt.Print("Enter your domain: ")
+	reader = bufio.NewReader(os.Stdin)
+	domain, err := reader.ReadString('\n')
+	cfg.Domain = strings.TrimSpace(domain)
+	
+	fmt.Print("Enter your username: ")
+	reader = bufio.NewReader(os.Stdin)
+	username, err := reader.ReadString('\n')
+	username = strings.TrimSpace(username)
+	username = strings.TrimSuffix(username, "\n")
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return err
+	}
+	err = cfg.SetUser(username)
+	if err != nil {
+		fmt.Printf("Error setting you up %s :(%v)\n", username,err)
+		return err
+	}
+	fmt.Printf("your account have been setup %s", username)
+	return nil
+}
